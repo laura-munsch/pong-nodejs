@@ -25,11 +25,33 @@ server.on('request', (request, response) => {
 });
 
 io.on('connect', (socket) => {
+
     console.log('Websocket connected');
 
-    socket.on('message', (msg) => {
-        console.log(msg);
-    });
+    let balle = {
+        x: 40, 
+        y: 50,
+        size: 20,
+        speedX: 1,
+        speedY: 1,
+        go: true
+    };
+
+    setInterval(() => {
+        if (balle.x == 0 + balle.size/2 || balle.x == 400 - balle.size/2 ) {
+            balle.speedX = balle.speedX * (-1);
+        }
+
+        if (balle.y == 0 + balle.size/2 || balle.y == 400 - balle.size/2) {
+            balle.speedY = balle.speedY * (-1);
+        }
+
+        balle.x += balle.speedX;
+        balle.y += balle.speedY;
+
+        io.emit('balle', balle);
+    }, 50);
+
 });
 
 server.listen(8080);
