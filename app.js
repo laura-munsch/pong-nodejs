@@ -15,6 +15,12 @@ server.on('request', (request, response) => {
             response.write(content);
             response.end();
         });
+    } else if (request.url == '/front.js') {
+        fs.readFile('public/front.js', (error, content) => {
+            response.writeHead(200, {'Content-type' : 'application/javascript'});
+            response.write(content);
+            response.end();
+        });
     }
 });
 
