@@ -20,6 +20,10 @@ server.on('request', (request, response) => {
 
 io.on('connect', (socket) => {
     console.log('Websocket connected');
+
+    socket.on('message', (msg) => {
+        console.log(msg);
+    });
 });
 
 server.listen(8080);
