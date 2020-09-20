@@ -23,27 +23,53 @@ server.on('request', (request, response) => {
     }
 });
 
-// définition des paramètres du j1 :
-let j1 = {
-    x: 150,
-    y: 370,
-    largeur: 100,
-    hauteur: 1
-};
+// nombre de personnes connectées
+nbJoueurs = 0;
+
+// définition des paramètres des joueurs :
+let joueurs = [
+    {
+        x: 150,
+        y: 30,
+        largeur: 100,
+        hauteur: 1
+    },
+    {
+        x: 370,
+        y: 150,
+        largeur: 1,
+        hauteur: 100
+    },
+    {
+        x: 150,
+        y: 370,
+        largeur: 100,
+        hauteur: 1
+    },
+    {
+        x: 30,
+        y: 150,
+        largeur: 1,
+        hauteur: 100
+    },
+];
 
 io.on('connect', (socket) => {
-    console.log('Joueur connecté');
-    io.emit('j1', j1);
+    // le nombre de joueurs connectés augmente
+    nbJoueurs ++;
+    io.emit('joueurs', joueurs);
+    io.emit('nbJoueurs', nbJoueurs);
+    console.log('Joueur ' + nbJoueurs + ' connecté');
 
-    // détection d'une touche du clavier et renvoie des valeurs du j1 mises à jour
+    // détection d'une touche du clavier et renvoie des valeurs du joueurs[0] mises à jour
     socket.on('move', (touche) => {
-        if (touche == 37 && j1.x > 0) {
-            j1.x -= 10;
-        } else if (touche == 39 && j1.x < 400 - j1.largeur) {
-            j1.x += 10;
+        if (touche == 37 && joueurs[0].x > 0) {
+            joueurs[0].x -= 10;
+        } else if (touche == 39 && joueurs[0].x < 400 - joueurs[0].largeur) {
+            joueurs[0].x += 10;
         }
 
-        io.emit('j1', j1);
+        io.emit('joueurs', joueurs);
     });
 });
 
@@ -67,7 +93,7 @@ setInterval(() => {
     }
 
     // calcul du déplacement de la balle (contre les joueurs) :
-    if (balle.x > j1.x - balle.size / 2 && balle.x < j1.x + j1.largeur + balle.size / 2 && balle.y > j1.y - balle.size / 2) {
+    if (balle.x > joueurs[0].x - balle.size / 2 && balle.x < joueurs[0].x + joueurs[0].largeur + balle.size / 2 && balle.y > joueurs[0].y - balle.size / 2) {
         balle.speddX = - balle.speedX;
         balle.speedY = - balle.speedY;
     }
