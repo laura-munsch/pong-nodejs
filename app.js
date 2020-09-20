@@ -5,10 +5,9 @@ const fs = require('fs');
 
 const io = require('socket.io')(server);
 
-const pino = require('pino')('app.log');
-
 
 server.on('request', (request, response) => {
+    //chargement des fichiers :
     if (request.url == '/') {
         fs.readFile('public/front.html', (error, content) => {
             response.writeHead(200, {'Content-type' : 'text/html'});
@@ -24,35 +23,45 @@ server.on('request', (request, response) => {
     }
 });
 
-io.on('connect', (socket) => {
+// définition des paramètres du j1 :
+let j1 = {
+    x: 150,
+    y: 370,
+    largeur: 100,
+    hauteur: 10
+};
 
+io.on('connect', (socket) => {
     console.log('Websocket connected');
 
-    let balle = {
-        x: 40, 
-        y: 50,
-        size: 20,
-        speedX: 1,
-        speedY: 1,
-        go: true
-    };
-
-    setInterval(() => {
-        if (balle.x == 0 + balle.size/2 || balle.x == 400 - balle.size/2 ) {
-            balle.speedX = balle.speedX * (-1);
-        }
-
-        if (balle.y == 0 + balle.size/2 || balle.y == 400 - balle.size/2) {
-            balle.speedY = balle.speedY * (-1);
-        }
-
-        balle.x += balle.speedX;
-        balle.y += balle.speedY;
-
-        io.emit('balle', balle);
-    }, 50);
-
+    //io.emit('j1', j1);
+    //console.log('j1 emited');
 });
+
+// définition des paramètres de la balle :
+let balle = {
+    x: 40, 
+    y: 50,
+    size: 20,
+    speedX: 1,
+    speedY: 1
+};
+
+setInterval(() => {
+    // calcul du déplacement de la balle :
+    if (balle.x == 0 + balle.size/2 || balle.x == 400 - balle.size/2 ) {
+        balle.speedX = - balle.speedX;
+    }
+
+    if (balle.y == 0 + balle.size/2 || balle.y == 400 - balle.size/2) {
+        balle.speedY = - balle.speedY;
+    }
+
+    balle.x += balle.speedX;
+    balle.y += balle.speedY;
+
+    io.emit('balle', balle);
+}, 1000 / 60);
 
 server.listen(8080);
 
