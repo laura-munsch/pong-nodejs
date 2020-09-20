@@ -28,19 +28,19 @@ let j1 = {
     x: 150,
     y: 370,
     largeur: 100,
-    hauteur: 10
+    hauteur: 1
 };
 
 io.on('connect', (socket) => {
     console.log('Websocket connected');
 
-    //io.emit('j1', j1);
-    //console.log('j1 emited');
+    io.emit('j1', j1);
+    console.log('j1 emited');
 });
 
 // définition des paramètres de la balle :
 let balle = {
-    x: 40, 
+    x: 220, 
     y: 50,
     size: 20,
     speedX: 1,
@@ -48,12 +48,18 @@ let balle = {
 };
 
 setInterval(() => {
-    // calcul du déplacement de la balle :
-    if (balle.x == 0 + balle.size/2 || balle.x == 400 - balle.size/2 ) {
+    // calcul du déplacement de la balle (contre les murs):
+    if (balle.x == 0 + balle.size/2 || balle.x == 400 - balle.size/2) {
         balle.speedX = - balle.speedX;
     }
 
     if (balle.y == 0 + balle.size/2 || balle.y == 400 - balle.size/2) {
+        balle.speedY = - balle.speedY;
+    }
+
+    // calcul du déplacement de la balle (contre les joueurs) :
+    if (balle.x > j1.x - balle.size / 2 && balle.x < j1.x + j1.largeur + balle.size / 2 && balle.y > j1.y - balle.size / 2) {
+        balle.speddX = - balle.speedX;
         balle.speedY = - balle.speedY;
     }
 
