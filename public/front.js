@@ -26,4 +26,8 @@ socket.on('j1', (j1Serveur) => {
     });
 });
 
+function keyPressed() {
+    socket.emit('move', keyCode);
+}
+
 

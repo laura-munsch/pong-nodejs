@@ -32,10 +32,19 @@ let j1 = {
 };
 
 io.on('connect', (socket) => {
-    console.log('Websocket connected');
-
+    console.log('Joueur connecté');
     io.emit('j1', j1);
-    console.log('j1 emited');
+
+    // détection d'une touche du clavier et renvoie des valeurs du j1 mises à jour
+    socket.on('move', (touche) => {
+        if (touche == 37 && j1.x > 0) {
+            j1.x -= 10;
+        } else if (touche == 39 && j1.x < 400 - j1.largeur) {
+            j1.x += 10;
+        }
+
+        io.emit('j1', j1);
+    });
 });
 
 // définition des paramètres de la balle :
