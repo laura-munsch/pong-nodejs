@@ -54,12 +54,16 @@ let joueurs = [
     },
 ];
 
+// à la connexion d'une des personnes :
 io.on('connect', (socket) => {
-    // le nombre de joueurs connectés augmente
-    nbJoueurs ++;
-    io.emit('joueurs', joueurs);
-    io.emit('nbJoueurs', nbJoueurs);
-    console.log('Joueur ' + nbJoueurs + ' connecté');
+    // on attend un peu pour être sûrs que la page du client s'est affichée
+    setTimeout(() => {
+        // le nombre de joueurs connectés augmente
+        nbJoueurs ++;
+        io.emit('nbJoueurs', nbJoueurs);
+        io.emit('joueurs', joueurs);
+        console.log('Joueur ' + nbJoueurs + ' connecté');
+    }, 100);
 
     // détection d'une touche du clavier et renvoie des valeurs du joueurs[0] mises à jour
     socket.on('move', (touche) => {
@@ -70,6 +74,14 @@ io.on('connect', (socket) => {
         }
 
         io.emit('joueurs', joueurs);
+    });
+
+    // à la déconnexion, on met à jour le nombre de joueurs et on renvoie les données actualisées
+    socket.on('disconnect', () => {
+        nbJoueurs --;
+        io.emit('nbJoueurs', nbJoueurs);
+        io.emit('joueurs', joueurs);
+        console.log('Joueur déconnecté');
     });
 });
 
@@ -82,6 +94,7 @@ let balle = {
     speedY: 1
 };
 
+// calculé et envoyé presque en continu pour faire avancer la balle
 setInterval(() => {
     // calcul du déplacement de la balle (contre les murs):
     // horizontal
@@ -95,16 +108,17 @@ setInterval(() => {
 
     // calcul du déplacement de la balle (contre les joueurs) :
     // horizontal
-    if ((balle.x > joueurs[0].x - balle.size / 2 && balle.x < joueurs[0].x + joueurs[0].largeur + balle.size / 2 && balle.y < joueurs[0].y + balle.size / 2) ||
-        (balle.x > joueurs[2].x - balle.size / 2 && balle.x < joueurs[2].x + joueurs[2].largeur + balle.size / 2 && balle.y > joueurs[2].y - balle.size / 2)) {
+    if ((nbJoueurs > 0 && balle.x > joueurs[0].x - balle.size / 2 && balle.x < joueurs[0].x + joueurs[0].largeur + balle.size / 2 && balle.y < joueurs[0].y + balle.size / 2) ||
+        (nbJoueurs > 2 && balle.x > joueurs[2].x - balle.size / 2 && balle.x < joueurs[2].x + joueurs[2].largeur + balle.size / 2 && balle.y > joueurs[2].y - balle.size / 2)) {
         balle.speedY = - balle.speedY;
     }
     // vertical
-    if ((balle.y > joueurs[1].y - balle.size / 2 && balle.y < joueurs[1].y + joueurs[1].hauteur + balle.size / 2 && balle.x > joueurs[1].x - balle.size / 2) ||
-        (balle.y > joueurs[3].y - balle.size / 2 && balle.y < joueurs[3].y + joueurs[3].hauteur + balle.size / 2 && balle.x < joueurs[3].x + balle.size / 2)) {
+    if ((nbJoueurs > 1 && balle.y > joueurs[1].y - balle.size / 2 && balle.y < joueurs[1].y + joueurs[1].hauteur + balle.size / 2 && balle.x > joueurs[1].x - balle.size / 2) ||
+        (nbJoueurs > 3 && balle.y > joueurs[3].y - balle.size / 2 && balle.y < joueurs[3].y + joueurs[3].hauteur + balle.size / 2 && balle.x < joueurs[3].x + balle.size / 2)) {
         balle.speedX = - balle.speedX;
     }
 
+    // la balle avance
     balle.x += balle.speedX;
     balle.y += balle.speedY;
 
@@ -114,5 +128,3 @@ setInterval(() => {
 server.listen(8080);
 
 console.log('App started');
-
-
