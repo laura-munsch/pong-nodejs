@@ -84,18 +84,25 @@ let balle = {
 
 setInterval(() => {
     // calcul du déplacement de la balle (contre les murs):
+    // horizontal
     if (balle.x == 0 + balle.size/2 || balle.x == 400 - balle.size/2) {
         balle.speedX = - balle.speedX;
     }
-
+    // vertical
     if (balle.y == 0 + balle.size/2 || balle.y == 400 - balle.size/2) {
         balle.speedY = - balle.speedY;
     }
 
     // calcul du déplacement de la balle (contre les joueurs) :
-    if (balle.x > joueurs[0].x - balle.size / 2 && balle.x < joueurs[0].x + joueurs[0].largeur + balle.size / 2 && balle.y > joueurs[0].y - balle.size / 2) {
-        balle.speddX = - balle.speedX;
+    // horizontal
+    if ((balle.x > joueurs[0].x - balle.size / 2 && balle.x < joueurs[0].x + joueurs[0].largeur + balle.size / 2 && balle.y < joueurs[0].y + balle.size / 2) ||
+        (balle.x > joueurs[2].x - balle.size / 2 && balle.x < joueurs[2].x + joueurs[2].largeur + balle.size / 2 && balle.y > joueurs[2].y - balle.size / 2)) {
         balle.speedY = - balle.speedY;
+    }
+    // vertical
+    if ((balle.y > joueurs[1].y - balle.size / 2 && balle.y < joueurs[1].y + joueurs[1].hauteur + balle.size / 2 && balle.x > joueurs[1].x - balle.size / 2) ||
+        (balle.y > joueurs[3].y - balle.size / 2 && balle.y < joueurs[3].y + joueurs[3].hauteur + balle.size / 2 && balle.x < joueurs[3].x + balle.size / 2)) {
+        balle.speedX = - balle.speedX;
     }
 
     balle.x += balle.speedX;
