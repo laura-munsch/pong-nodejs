@@ -63,14 +63,21 @@ io.on('connect', (socket) => {
         io.emit('nbJoueurs', nbJoueurs);
         io.emit('joueurs', joueurs);
         console.log('Joueur ' + nbJoueurs + ' connecté');
-    }, 100);
+    }, 300);
 
     // détection d'une touche du clavier et renvoie des valeurs du joueurs[0] mises à jour
-    socket.on('move', (touche) => {
-        if (touche == 37 && joueurs[0].x > 0) {
-            joueurs[0].x -= 10;
-        } else if (touche == 39 && joueurs[0].x < 400 - joueurs[0].largeur) {
-            joueurs[0].x += 10;
+    socket.on('move', (mouv) => {
+        console.log(mouv);
+        let j = mouv.joueur;
+
+        if ((j == 0 || j == 2) && (mouv.touche == 37 && joueurs[j].x > 0)) {
+            joueurs[j].x -= 10;
+        } else if ((j == 0 || j == 2) && (mouv.touche == 39 && joueurs[j].x < 400 - joueurs[j].largeur)) {
+            joueurs[j].x += 10;
+        } else if ((j == 1 || j == 3) && (mouv.touche == 38 && joueurs[j].y > 0)) {
+            joueurs[j].y -= 10;
+        } else if ((j == 1 || j == 3) && (mouv.touche == 40 && joueurs[j].y < 400 - joueurs[j].hauteur)) {
+            joueurs[j].y += 10;
         }
 
         io.emit('joueurs', joueurs);

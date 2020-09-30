@@ -7,6 +7,8 @@ let nbJoueurs = 0;
 let joueurs = [];
 let balle = {};
 
+let joueurActuel = 0;
+
 // création du canvas
 function setup() {
     createCanvas(canvasX, canvasY);
@@ -17,11 +19,15 @@ function setup() {
 } 
 
 function main() {
-    console.log('page chargée!');
+    console.log('page chargée pour joueur ' + joueurActuel + ' !');
 
     // on détecte le nombre de joueurs qui sont connectés
     socket.on('nbJoueurs', (nbJoueursServeur) => {
         nbJoueurs = nbJoueursServeur;
+
+        if (joueurActuel == 0) {
+            joueurActuel = nbJoueurs;
+        }
     });
 
     // on dessine le jeu à chaque déplacement d'un joueur ou de la balle
@@ -35,10 +41,18 @@ function main() {
         
             // dessin de la balle :
             fill(255, 255, 255);
+            noStroke();
             circle(balle.x, balle.y, balle.size);
 
             // dessin des joueurs :
             for (let i = 0 ; i < nbJoueurs ; i ++) {
+                // on affiche le joueur du client d'une couleur différente
+                if (i + 1 == joueurActuel) {
+                    stroke(0, 0, 255);
+                    console.log('yes');
+                } else {
+                    stroke(0, 0, 0);
+                }
                 rect(joueurs[i].x, joueurs[i].y, joueurs[i].largeur, joueurs[i].hauteur);
             }
         });
@@ -47,6 +61,10 @@ function main() {
 
 // détection du mouvement des joueurs :
 function keyPressed() {
-    socket.emit('move', keyCode);
+    let mouvement = {
+        touche: keyCode,
+        joueur: joueurActuel - 1
+    };
+    socket.emit('move', mouvement);
 }
 
