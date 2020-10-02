@@ -67,7 +67,6 @@ io.on('connect', (socket) => {
 
     // détection d'une touche du clavier et renvoie des valeurs du joueurs[0] mises à jour
     socket.on('move', (mouv) => {
-        console.log(mouv);
         let j = mouv.joueur;
 
         if ((j == 0 || j == 2) && (mouv.touche == 37 && joueurs[j].x > 0)) {
