@@ -100,7 +100,12 @@ let balle = {
     speedY: 1
 };
 
-// calculé et envoyé presque en continu pour faire avancer la balle
+// envoi presque en continu les données calculées de la balle
+setInterval(() => {
+    io.emit('balle', balle);
+}, 1000 / 60);
+
+// calcul presque en continu pour faire avancer la balle
 setInterval(() => {
     // calcul du déplacement de la balle (contre les murs):
     // horizontal
@@ -127,8 +132,6 @@ setInterval(() => {
     // la balle avance
     balle.x += balle.speedX;
     balle.y += balle.speedY;
-
-    io.emit('balle', balle);
 }, 1000 / 60);
 
 server.listen(8080);
