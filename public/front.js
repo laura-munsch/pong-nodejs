@@ -12,7 +12,7 @@ let joueurActuel = 0;
 // création du canvas
 function setup() {
     createCanvas(canvasX, canvasY);
-    background(220, 100, 100);
+    background(255, 198, 189);
     frameRate(20);
 
     main();
@@ -37,7 +37,7 @@ function main() {
         socket.on('balle', (balleServeur) => {
             balle = balleServeur;
 
-            background(220, 100, 100);
+            background(255, 198, 189);
         
             // dessin de la balle :
             fill(255, 255, 255);
@@ -48,10 +48,10 @@ function main() {
             for (let i = 0 ; i < nbJoueurs ; i ++) {
                 // on affiche le joueur du client d'une couleur différente
                 if (i + 1 == joueurActuel) {
-                    stroke(0, 0, 255);
+                    stroke(63, 143, 106);
                     console.log('yes');
                 } else {
-                    stroke(0, 0, 0);
+                    stroke(143, 86, 77);
                 }
                 rect(joueurs[i].x, joueurs[i].y, joueurs[i].largeur, joueurs[i].hauteur);
             }
